@@ -3,22 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>UKRP Personnel Authentication</title>
+<title>UKRP System</title>
 
 <style>
-
 body{
     margin:0;
     font-family: Arial, Helvetica, sans-serif;
     background:black;
     color:white;
+    height:100vh;
     display:flex;
     justify-content:center;
     align-items:center;
-    height:100vh;
 }
-
-/* ===== Card ===== */
 
 .container{
     width:90%;
@@ -27,16 +24,10 @@ body{
     padding:30px;
     border-radius:20px;
     border-top:5px solid red;
-    box-shadow:0 0 20px rgba(255,0,0,0.3);
+    box-shadow:0 0 25px rgba(255,0,0,0.3);
 }
 
-/* ===== Title ===== */
-
-h1{
-    margin-top:0;
-}
-
-/* ===== Inputs ===== */
+h1{margin-top:0;}
 
 input, select{
     width:100%;
@@ -47,8 +38,6 @@ input, select{
     border:none;
     font-size:16px;
 }
-
-/* ===== Button ===== */
 
 button{
     width:100%;
@@ -62,95 +51,96 @@ button{
     cursor:pointer;
 }
 
-button:hover{
-    opacity:0.9;
-}
-
-/* ===== Hidden ===== */
-
-.hidden{
-    display:none;
-}
-
+.hidden{display:none;}
 </style>
 </head>
 <body>
 
-<!-- LOGIN SCREEN -->
-
+<!-- LOGIN -->
 <div class="container" id="loginBox">
     <h1>UKRP</h1>
     <p>Personnel Authentication</p>
 
-    <input type="text" id="username" placeholder="Roblox Username">
-
+    <input id="username" placeholder="Roblox Username">
     <select id="rank">
         <option value="">-- Select Authority --</option>
-        <option value="Officer">Officer</option>
-        <option value="Moderator">Moderator</option>
-        <option value="Admin">Admin</option>
-        <option value="Trainee">Trainee</option>
+        <option>Officer</option>
+        <option>Moderator</option>
+        <option>Admin</option>
+        <option>Trainee</option>
     </select>
 
     <button onclick="connect()">Establish Connection</button>
 </div>
 
 <!-- ACCESS DENIED -->
-
 <div class="container hidden" id="deniedBox">
     <h1>Access Denied</h1>
     <p>Trainee accounts are restricted.</p>
-    <button onclick="goBack()">Return</button>
+    <button onclick="logout()">Return</button>
+</div>
+
+<!-- DASHBOARD -->
+<div class="container hidden" id="dashboard">
+    <h1>Dashboard</h1>
+    <p id="welcome"></p>
+    <button onclick="logout()">Logout</button>
 </div>
 
 <script>
+const loginBox = document.getElementById("loginBox");
+const deniedBox = document.getElementById("deniedBox");
+const dashboard = document.getElementById("dashboard");
+const welcome = document.getElementById("welcome");
 
-/* ===== Connect Button ===== */
-
+/* ===== Connect ===== */
 function connect(){
+    const user = username.value.trim();
+    const rank = document.getElementById("rank").value;
 
-    let user = document.getElementById("username").value.trim();
-    let rank = document.getElementById("rank").value;
-
-    if(user === "" || rank === ""){
-        alert("Please fill all fields");
+    if(!user || !rank){
+        alert("Fill all fields");
         return;
     }
-
-    /* Trainee Lock */
 
     if(rank === "Trainee"){
         showDenied();
         return;
     }
 
-    /* Save Valid Login */
-
     localStorage.setItem("ukrp_user", user);
     localStorage.setItem("ukrp_rank", rank);
-
-    alert("Connection Established ✔");
+    showDashboard();
 }
 
-/* ===== Show Denied ===== */
+/* ===== Screens ===== */
+function showDashboard(){
+    loginBox.classList.add("hidden");
+    deniedBox.classList.add("hidden");
+    dashboard.classList.remove("hidden");
+
+    welcome.innerText =
+        "Welcome " + localStorage.getItem("ukrp_user") +
+        " (" + localStorage.getItem("ukrp_rank") + ")";
+}
 
 function showDenied(){
-    document.getElementById("loginBox").classList.add("hidden");
-    document.getElementById("deniedBox").classList.remove("hidden");
+    loginBox.classList.add("hidden");
+    dashboard.classList.add("hidden");
+    deniedBox.classList.remove("hidden");
 }
 
-/* ===== Return Button ===== */
-
-function goBack(){
-
-    localStorage.removeItem("ukrp_user");
-    localStorage.removeItem("ukrp_rank");
-
-    document.getElementById("deniedBox").classList.add("hidden");
-    document.getElementById("loginBox").classList.remove("hidden");
-
+function logout(){
+    localStorage.clear();
+    deniedBox.classList.add("hidden");
+    dashboard.classList.add("hidden");
+    loginBox.classList.remove("hidden");
 }
 
+/* ===== Auto Login ===== */
+if(localStorage.getItem("ukrp_user")){
+    showDashboard();
+}
 </script>
 
 </body>
