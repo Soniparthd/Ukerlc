@@ -3,285 +3,154 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>UKRP | Staff Portal</title>
+<title>UKRP Personnel Authentication</title>
 
 <style>
-/* ================= CSS ================= */
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #0a0a0a;
-  color: white;
+
+body{
+    margin:0;
+    font-family: Arial, Helvetica, sans-serif;
+    background:black;
+    color:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
 }
 
-button {
-  cursor: pointer;
-  font-weight: bold;
+/* ===== Card ===== */
+
+.container{
+    width:90%;
+    max-width:400px;
+    background:#111;
+    padding:30px;
+    border-radius:20px;
+    border-top:5px solid red;
+    box-shadow:0 0 20px rgba(255,0,0,0.3);
 }
 
-.hidden { display: none; }
+/* ===== Title ===== */
 
-#setup-stage,
-#denied-stage {
-  position: fixed;
-  inset: 0;
-  background: black;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+h1{
+    margin-top:0;
 }
 
-.box {
-  background: #111;
-  padding: 30px;
-  border-radius: 18px;
-  width: 100%;
-  max-width: 420px;
-  border-top: 5px solid red;
+/* ===== Inputs ===== */
+
+input, select{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    margin-bottom:20px;
+    border-radius:8px;
+    border:none;
+    font-size:16px;
 }
 
-h1 {
-  text-align: center;
-  font-size: 42px;
-  margin: 0;
+/* ===== Button ===== */
+
+button{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:10px;
+    font-size:16px;
+    font-weight:bold;
+    background:red;
+    color:white;
+    cursor:pointer;
 }
 
-p.subtitle {
-  text-align: center;
-  font-size: 12px;
-  color: #999;
-  margin-bottom: 20px;
-  letter-spacing: 0.2em;
+button:hover{
+    opacity:0.9;
 }
 
-.field {
-  margin-bottom: 16px;
+/* ===== Hidden ===== */
+
+.hidden{
+    display:none;
 }
 
-input, select {
-  width: 100%;
-  padding: 12px;
-  background: #000;
-  color: white;
-  border: 1px solid #333;
-  border-radius: 8px;
-}
-
-button.primary {
-  width: 100%;
-  padding: 14px;
-  background: red;
-  color: white;
-  border-radius: 12px;
-  border: none;
-}
-
-nav {
-  display: flex;
-  justify-content: space-between;
-  padding: 16px;
-  border-bottom: 1px solid #333;
-}
-
-main {
-  display: grid;
-  grid-template-columns: 1fr 2fr;
-  gap: 20px;
-  padding: 20px;
-}
-
-@media (max-width: 800px) {
-  main { grid-template-columns: 1fr; }
-}
-
-.card {
-  background: #111;
-  padding: 20px;
-  border-radius: 16px;
-}
-
-.punish-btn {
-  padding: 12px;
-  background: #000;
-  border: 1px solid #444;
-  color: #aaa;
-  border-radius: 10px;
-}
-
-.punish-btn.active {
-  background: red;
-  color: white;
-}
-
-.levels {
-  display: flex;
-  gap: 10px;
-  margin: 15px 0;
-}
-
-.output {
-  background: #000;
-  padding: 20px;
-  border-radius: 16px;
-  margin-top: 15px;
-}
 </style>
 </head>
-
 <body>
 
-<!-- LOGIN -->
-<section id="setup-stage">
-  <div class="box">
+<!-- LOGIN SCREEN -->
+
+<div class="container" id="loginBox">
     <h1>UKRP</h1>
-    <p class="subtitle">PERSONNEL AUTHENTICATION</p>
+    <p>Personnel Authentication</p>
 
-    <div class="field">
-      <input id="name" placeholder="Roblox Username">
-    </div>
+    <input type="text" id="username" placeholder="Roblox Username">
 
-    <div class="field">
-      <select id="rank">
+    <select id="rank">
         <option value="">-- Select Authority --</option>
-        <option value="Trainee">Trainee</option>
+        <option value="Officer">Officer</option>
         <option value="Moderator">Moderator</option>
-        <option value="Senior Moderator">Senior Moderator</option>
         <option value="Admin">Admin</option>
-        <option value="Founder">Founder</option>
-      </select>
-    </div>
+        <option value="Trainee">Trainee</option>
+    </select>
 
-    <button class="primary" onclick="login()">Establish Connection</button>
-  </div>
-</section>
+    <button onclick="connect()">Establish Connection</button>
+</div>
 
-<!-- DENIED -->
-<section id="denied-stage" class="hidden">
-  <div class="box">
-    <h2>Access Denied</h2>
+<!-- ACCESS DENIED -->
+
+<div class="container hidden" id="deniedBox">
+    <h1>Access Denied</h1>
     <p>Trainee accounts are restricted.</p>
-    <button class="primary" onclick="resetAll()">Return</button>
-  </div>
-</section>
-
-<!-- DASHBOARD -->
-<section id="dashboard" class="hidden">
-  <nav>
-    <div>UKRP</div>
-    <div>
-      <span id="d-name"></span> |
-      <span id="d-rank"></span>
-      <button onclick="resetAll()">Logout</button>
-    </div>
-  </nav>
-
-  <main>
-    <div class="card">
-      <p id="greet"></p>
-      <button onclick="copyText(greet.innerText)">Copy Greeting</button>
-    </div>
-
-    <div class="card">
-      <select id="offense">
-        <option value="">-- Select Offense --</option>
-        <option>FRP</option>
-        <option>RDM</option>
-        <option>VDM</option>
-        <option>GTA Driving</option>
-        <option>NLR</option>
-        <option>LTAP</option>
-      </select>
-
-      <input id="target" placeholder="Offender name">
-
-      <div class="levels">
-        <button class="punish-btn" onclick="setLevel(this,'Warning')">Warning</button>
-        <button class="punish-btn" onclick="setLevel(this,'Kick')">Kick</button>
-        <button class="punish-btn" onclick="setLevel(this,'Ban')">Ban</button>
-      </div>
-
-      <div class="output">
-        <p id="log">Select details to generate log.</p>
-      </div>
-
-      <button class="primary" onclick="copyText(log.innerText)">Copy Log</button>
-    </div>
-  </main>
-</section>
+    <button onclick="goBack()">Return</button>
+</div>
 
 <script>
-/* ================= JS ================= */
-let level = "";
 
-function login() {
-  const name = document.getElementById("name").value.trim();
-  const rank = document.getElementById("rank").value;
+/* ===== Connect Button ===== */
 
-  if (!name || !rank) {
-    alert("Fill all fields");
-    return;
-  }
+function connect(){
 
-  if (rank === "Trainee") {
-    showDenied();
-    return;
-  }
+    let user = document.getElementById("username").value.trim();
+    let rank = document.getElementById("rank").value;
 
-  localStorage.setItem("ukrp", JSON.stringify({ name, rank }));
-  openDashboard(name, rank);
+    if(user === "" || rank === ""){
+        alert("Please fill all fields");
+        return;
+    }
+
+    /* Trainee Lock */
+
+    if(rank === "Trainee"){
+        showDenied();
+        return;
+    }
+
+    /* Save Valid Login */
+
+    localStorage.setItem("ukrp_user", user);
+    localStorage.setItem("ukrp_rank", rank);
+
+    alert("Connection Established ✔");
 }
 
-function openDashboard(name, rank) {
-  hideAll();
-  dashboard.classList.remove("hidden");
-  d-name.innerText = name;
-  d-rank.innerText = rank;
-  greet.innerText = `Hello, I'm ${rank} at UKRP. How may I assist you?`;
+/* ===== Show Denied ===== */
+
+function showDenied(){
+    document.getElementById("loginBox").classList.add("hidden");
+    document.getElementById("deniedBox").classList.remove("hidden");
 }
 
-function showDenied() {
-  hideAll();
-  denied-stage.classList.remove("hidden");
+/* ===== Return Button ===== */
+
+function goBack(){
+
+    localStorage.removeItem("ukrp_user");
+    localStorage.removeItem("ukrp_rank");
+
+    document.getElementById("deniedBox").classList.add("hidden");
+    document.getElementById("loginBox").classList.remove("hidden");
+
 }
 
-function hideAll() {
-  setup-stage.classList.add("hidden");
-  denied-stage.classList.add("hidden");
-  dashboard.classList.add("hidden");
-}
-
-function resetAll() {
-  localStorage.removeItem("ukrp");
-  location.reload();
-}
-
-function setLevel(btn, lvl) {
-  level = lvl;
-  document.querySelectorAll(".punish-btn").forEach(b => b.classList.remove("active"));
-  btn.classList.add("active");
-  updateLog();
-}
-
-function updateLog() {
-  const off = offense.value;
-  const targetName = target.value || "User";
-  if (!off || !level) return;
-  log.innerText = `OFFICIAL NOTICE: ${targetName}, you are issued a ${level} for ${off}.`;
-}
-
-offense.onchange = updateLog;
-target.oninput = updateLog;
-
-function copyText(t) {
-  navigator.clipboard.writeText(t);
-}
-
-/* Auto session restore */
-const saved = localStorage.getItem("ukrp");
-if (saved) {
-  const s = JSON.parse(saved);
-  openDashboard(s.name, s.rank);
-}
 </script>
 
 </body>
